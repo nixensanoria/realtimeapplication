@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sample Messaging App</title>
+</head>
+<body>
+  <h1>Real-time Chat</h1>
+  <p>Open this page in two browser tabs to see messages arrive in real time.</p>
+
+  <p id="status">Connecting...</p>
+
+  <ul id="messages"></ul>
+
+  <form id="chat-form">
+    <label for="message">Message:</label>
+    <input id="message" maxlength="2000" autocomplete="off" required>
+    <button type="submit">Send</button>
+  </form>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io('/chat');
+    const status = document.getElementById("status");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message");
+    const messages = document.getElementById("messages");
+
+    socket.on("connect", () => { status.textContent = "Connected"; });
+    socket.on("disconnect", () => { status.textContent = "Disconnected"; });
+    socket.on("connect_error", () => { status.textContent = "Connection failed. Retrying..."; });
+    socket.on("message:error", (result) => { status.textContent = result.error; });
+
+    socket.on("message", (message) => {
+      const item = document.createElement("li");
+      item.textContent = `${message.senderId}: ${message.text}`;
+      messages.appendChild(item);
+    });
+
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!socket.connected) {
+        status.textContent = "Not connected. Please wait and try again.";
+        return;
+      }
+      if (!input.value.trim()) {
+        status.textContent = "Please enter a message.";
+        return;
+      }
+      socket.emit("message", input.value);
+      input.value = "";
+      status.textContent = "Connected";
+    });
+  </script>
+
+</body>
+</html>
