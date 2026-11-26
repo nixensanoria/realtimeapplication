@@ -21,7 +21,6 @@ npm start
 By default, the server runs on port `5000`. Open:
 
 - Quiz: <http://localhost:5000/quiz>
-- Chat: <http://localhost:5000/chat>
 
 To use a different port, set `PORT` before starting the server. For example, in PowerShell:
 
@@ -38,8 +37,6 @@ The quiz and chat work without a MySQL server. The user-management API (`/users`
 npm run migrate
 npm start
 ```
-
-Never commit `.env`; it may contain local credentials. `.env.example` contains placeholders and is safe to share.
 
 ## Play a multiplayer quiz
 
